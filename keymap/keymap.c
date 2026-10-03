@@ -99,3 +99,10 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 void md_rf_send_carrier(uint8_t channel, uint8_t power, uint8_t mode) {}
 void md_rf_send_stop(void) {}
 uint32_t suspend_timer;
+
+const key_override_t caps_override =
+    ko_make_with_layers_and_negmods(MOD_MASK_SHIFT, KC_ESC, KC_CAPS, ~0, MOD_MASK_CAG);
+
+const key_override_t *key_overrides[] = {
+    &caps_override,
+};
