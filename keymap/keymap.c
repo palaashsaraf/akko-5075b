@@ -94,3 +94,8 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 };
 #endif
 // clang-format on
+
+// akko's published source calls these but never defines them
+void md_rf_send_carrier(uint8_t channel, uint8_t power, uint8_t mode) {}
+void md_rf_send_stop(void) {}
+uint32_t suspend_timer;
