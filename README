@@ -1,0 +1,31 @@
+akko-5075b
+
+my qmk keymap for the akko 5075b via.
+
+changes
+  caps          esc
+  shift+caps    caps lock
+  sleep         10 min idle on 2.4g/bt, was 2
+  lighting      solid keys, flash on press, side strip off
+  bootmagic     hold esc while plugging in
+
+requirements
+  qmk, arm-none-eabi-gcc, wb32-dfu-updater_cli, gnu make
+  (gmake on macos)
+
+build
+  make setup    clone akko's qmk fork to ~/qmk_akko, once
+  make          build
+  make flash    build and flash; fn+rshift+esc for the bootloader
+
+files
+  keymap/       keymap.c, config.h, rules.mk
+  sleep.patch   applied to akko's tree before each build
+
+notes
+  hold fn+~ for 3 s after the first flash to reset settings.
+  colors live in keymap/config.h and keymap.c.
+  akko's published source doesn't build as-is; keymap.c stubs
+  the missing symbols.
+
+gpl-2.0-or-later
