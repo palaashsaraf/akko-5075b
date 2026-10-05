@@ -5,6 +5,7 @@ my qmk keymap for the akko 5075b via.
 changes
   caps          esc
   shift+caps    caps lock
+  caps lock     caps key glows green
   shift+knob    display brightness
   sleep         10 min idle on 2.4g/bt, was 2
   lighting      solid keys, flash on press, side strip off

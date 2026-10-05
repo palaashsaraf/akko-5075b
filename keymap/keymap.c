@@ -128,32 +128,44 @@ void keyboard_post_init_user(void) {
 #define FLASH_HOLD 150  // ms at full flash color
 #define FLASH_FADE 700  // ms to fade back
 
+// caps lock lights the caps key catppuccin mocha green
+#define CAPS_HUE   82   // mocha green, 115 degrees
+#define CAPS_SAT   170
+
 static uint8_t mix(uint8_t a, uint8_t b, uint8_t t) {
     return a + (b - a) * t / 255;
 }
 
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
-    if (rgb_matrix_get_mode() != RGB_MATRIX_SOLID_COLOR) return true;
-
     uint16_t val = rgb_matrix_get_val() * FLASH_GAIN;
     if (val > 255) val = 255;
 
-    RGB base  = hsv_to_rgb(rgb_matrix_get_hsv());
-    RGB flash = hsv_to_rgb((HSV){FLASH_HUE, FLASH_SAT, val});
+    if (rgb_matrix_get_mode() == RGB_MATRIX_SOLID_COLOR) {
+        RGB base  = hsv_to_rgb(rgb_matrix_get_hsv());
+        RGB flash = hsv_to_rgb((HSV){FLASH_HUE, FLASH_SAT, val});
 
-    for (uint8_t i = 0; i < g_last_hit_tracker.count; i++) {
-        uint8_t  led  = g_last_hit_tracker.index[i];
-        uint16_t tick = g_last_hit_tracker.tick[i];
-        if (led < led_min || led >= led_max || tick >= FLASH_HOLD + FLASH_FADE) continue;
+        for (uint8_t i = 0; i < g_last_hit_tracker.count; i++) {
+            uint8_t  led  = g_last_hit_tracker.index[i];
+            uint16_t tick = g_last_hit_tracker.tick[i];
+            if (led < led_min || led >= led_max || tick >= FLASH_HOLD + FLASH_FADE) continue;
 
-        uint8_t t = 0;
-        if (tick > FLASH_HOLD) {
-            uint16_t x = (tick - FLASH_HOLD) * 255 / FLASH_FADE;
-            t = x * x / 255;
+            uint8_t t = 0;
+            if (tick > FLASH_HOLD) {
+                uint16_t x = (tick - FLASH_HOLD) * 255 / FLASH_FADE;
+                t = x * x / 255;
+            }
+            rgb_matrix_set_color(led, mix(flash.r, base.r, t),
+                                      mix(flash.g, base.g, t),
+                                      mix(flash.b, base.b, t));
         }
-        rgb_matrix_set_color(led, mix(flash.r, base.r, t),
-                                  mix(flash.g, base.g, t),
-                                  mix(flash.b, base.b, t));
+    }
+
+    if (host_keyboard_led_state().caps_lock) {
+        uint8_t led = g_led_config.matrix_co[3][0];
+        if (led >= led_min && led < led_max) {
+            RGB caps = hsv_to_rgb((HSV){CAPS_HUE, CAPS_SAT, val});
+            rgb_matrix_set_color(led, caps.r, caps.g, caps.b);
+        }
     }
     return true;
 }
