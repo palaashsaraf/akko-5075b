@@ -157,3 +157,16 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     }
     return true;
 }
+
+// shift + knob changes display brightness; knob alone stays volume
+bool encoder_update_user(uint8_t index, bool clockwise) {
+    const uint8_t mods = get_mods();
+    if (!(mods & MOD_MASK_SHIFT)) return true;
+
+    del_mods(MOD_MASK_SHIFT);
+    send_keyboard_report();
+    tap_code_delay(clockwise ? KC_BRIU : KC_BRID, 10);
+    set_mods(mods);
+    send_keyboard_report();
+    return false;
+}
